@@ -1,35 +1,46 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
-import "../contracts/YourContract.sol";
-import "./DeployHelpers.s.sol";
+import {Script} from "forge-std/Script.sol";
+import {ScaffoldETHDeploy} from "./DeployHelpers.s.sol";
+import {Ethereis} from "../contracts/BrazilianStablecoin.sol";
+import {DSCEngine} from "../contracts/DSCEngine.sol";
 
-contract DeployScript is ScaffoldETHDeploy {
+contract DSCEngineDeploy is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
 
-    function run() external {
-        uint256 deployerPrivateKey = setupLocalhostEnv();
-        if (deployerPrivateKey == 0) {
-            revert InvalidPrivateKey(
-                "You don't have a deployer account. Make sure you have set DEPLOYER_PRIVATE_KEY in .env or use `yarn generate` to generate a new random account"
-            );
-        }
-        vm.startBroadcast(deployerPrivateKey);
-        YourContract yourContract =
-            new YourContract(vm.addr(deployerPrivateKey));
-        console.logString(
-            string.concat(
-                "YourContract deployed at: ", vm.toString(address(yourContract))
-            )
-        );
-        vm.stopBroadcast();
+    address[] public tokenAddresses;
+    address[] public priceFeedAddresses;
+    uint256 public chainid;
 
-        /**
-         * This function generates the file containing the contracts Abi definitions.
-         * These definitions are used to derive the types needed in the custom scaffold-eth hooks, for example.
-         * This function should be called last.
-         */
-        exportDeployments();
+    function run() external returns (Ethereis, DSCEngine, ScaffoldETHDeploy) {
+        ScaffoldETHDeploy helperConfig = new ScaffoldETHDeploy(); 
+        chainid = helperConfig.getChain();
+        (
+            address wethUsdPriceFeed,
+            address wbtcUsdPriceFeed,
+            address weth,
+            address wbtc,
+            uint256 deployerKey
+        ) =helperConfig.activeNetworkConfig();
+        
+        tokenAddresses = [weth, wbtc];
+        priceFeedAddresses = [wethUsdPriceFeed, wbtcUsdPriceFeed];
+
+        vm.startBroadcast(deployerKey);
+        Ethereis dsc = new Ethereis();
+        DSCEngine dscEngine = new DSCEngine(
+            tokenAddresses,
+            priceFeedAddresses,
+            address(dsc)
+        );
+        dsc.transferOwnership(address(dscEngine));
+        exportDeployments(); 
+        vm.stopBroadcast();
+        return (dsc, dscEngine, helperConfig); 
+    }
+    function getChain() public view returns  (uint256) {
+        return chainid;
     }
 
     function test() public {}
