@@ -4,56 +4,26 @@ pragma solidity ^0.8.20;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {Ethereis} from "./BrazilianStableCoin.sol";
+import {Ethereis} from "./StablecoinToken.sol";
 import {OracleLib, AggregatorV3Interface} from "../lib/OracleLib.sol";
-
+import {DSCEngineSupport} from "./DSCEngineSupport.sol";
 
 /**
- * @title DSCEngine
+ * @title DSCEngine - Core logic and Functions
  * @author dev.Patok
- * @notice This contract is the core of the DSC protocol. It is responsible for all the logic and price rules
- * @notice Inspired by RAI Finance and MakerDAO
  */
 
 
-contract DSCEngine is ReentrancyGuard {
-    /////////////////
-    // Errors     //
-    ///////////////
-    error Engine__NotMoreThanZero();
-    error Engine__TokenAddressAndPriceNotSameLength();
-    error Engine__TokenNotSupported();
-    error Engine__TransferFailed();
-    error Engine__LowHealthFactor(uint256 healthFactor);
-    error Engine__MintFailed();
-    error Engine__HighHealth();
-    error Engine__NotEnoughCollateral();
+contract DSCEngine is ReentrancyGuard, DSCEngineSupport {
+    
 
-    /////////////////
-    // Events     //
-    ///////////////
+    //////////////////////////////
+    // Events | Mods | Vari     //
+    //////////////////////////////
     event collateralDeposited(address indexed user, address indexed token, uint256 amount);
     event collateralRedeemed(address indexed from, address indexed to, address token, uint256 amount);
-    /////////////////
-    // Modifiers  //
-    ///////////////
-    modifier moreThanZero (uint256 _amount) {
-        if (_amount == 0){
-            revert Engine__NotMoreThanZero();
-        }
-        _;
-    }
 
-    modifier isTokenAllowed (address _tokenAddress) {
-        if (s_PriceFeed[_tokenAddress] == address(0)){
-            revert Engine__TokenNotSupported();
-        }
-        _;
-    }
 
-    /////////////////
-    // Variables  //
-    ///////////////
     Ethereis public immutable i_ETHRS;
     using OracleLib for AggregatorV3Interface;
     
@@ -65,16 +35,13 @@ contract DSCEngine is ReentrancyGuard {
     uint256 private constant ADD_FEEDPRE = 1e10;
     uint256 private constant PRECISION = 1e18;
 
-    mapping(address token => address priceFeed) private s_PriceFeed;
+    mapping(address token => address priceFeed) public s_PriceFeed;
     mapping(address user => mapping(address token => uint256 amount)) private s_UserCollateral;
     mapping(address user => uint256 dscMintedAmount) private s_UserDSCMinted;
-    address[] private s_collateralTokens;
+    address[] public s_collateralTokens;
 
 
-    /////////////////
-    // Functions  //
-    ///////////////
-    constructor (address[] memory _tokenAddresses, address[] memory _priceFeedAddresses, address _brscAddress) {
+    constructor (address[] memory _tokenAddresses, address[] memory _priceFeedAddresses, address _brscAddress) DSCEngineSupport(_brscAddress) {
         for (uint256 i = 0; i < _tokenAddresses.length; i++){
             s_PriceFeed[_tokenAddresses[i]] = _priceFeedAddresses[i];
         }
@@ -88,18 +55,10 @@ contract DSCEngine is ReentrancyGuard {
         i_ETHRS = Ethereis(_brscAddress);
         
     }
-    
-    /////////////////
-    // External   //
-    ///////////////
 
-    ////////////////////
-    /// Deposits and Withdrawals	
-    /////////
-    // depositCollMintBrsc @> 
-    // burnBdepositCollateralrsc @> 
-    // redeemCollateral @>
-    //
+    /////////////////
+    // Functions  
+    ///////////////    
     function depositCollMintBrsc (address _tokenCollateral, uint256 _collAmount, uint256 _brscToMint) external {
         depositCollateral(_tokenCollateral, _collAmount);
         mintBrsc(_brscToMint);
@@ -129,13 +88,6 @@ contract DSCEngine is ReentrancyGuard {
 
     // function redeemCollwithBrsc () external {}
 
-    ////////////////////
-    /// Core	
-    /////////
-    // mintBrsc @> 
-    // burnBrsc @> 
-    // liquidate @>
-    //
     function mintBrsc(uint256 _amountToMint) public moreThanZero(_amountToMint) {
         s_UserDSCMinted[msg.sender] += _amountToMint;
         _revertIfLowHealthFactor(msg.sender);
@@ -157,7 +109,7 @@ contract DSCEngine is ReentrancyGuard {
             revert Engine__HighHealth();
         }
         uint256 tokenDebtPaid = getUSDValueOfToken(_collateral, _Debt);
-        uint256 bonus = (tokenDebtPaid * LIQUIDATION_BONUS) / LIQUIDATION_PRECISION;
+        // uint256 bonus = (tokenDebtPaid * LIQUIDATION_BONUS) / LIQUIDATION_PRECISION;
         _burnDsc(_Debt, _user, msg.sender);
         uint256 EndingHelath = _healthFactor(_user);
         if(EndingHelath <= StartingHealth){
@@ -167,11 +119,8 @@ contract DSCEngine is ReentrancyGuard {
     }
 
     ////////////////////
-    /// Get Values
+    /// Low
     /////////
-    // AccountCollateralValue @> 
-    // getUSDValueOfToken @> 
-    // 
     function AccountCollateralValue(address _user) public view returns(uint256 collateralValueInUSD) {
         for (uint256 i = 0; i < s_collateralTokens.length; i++){
             address token = s_collateralTokens[i];
@@ -186,17 +135,6 @@ contract DSCEngine is ReentrancyGuard {
         return ((uint256(price) * ADD_FEEDPRE) * _amount) / PRECISION;
     }
 
-    /////////////////
-    // Private    //
-    ///////////////
-
-    ////////////////////
-    /// sub functions
-    /////////
-    // _burnDsc @>
-    // _getAddressInfo @> 
-    // _redeemCollateral @> 
-    //
     function _burnDsc(uint256 _amountburn, address _of, address _dscFrom) private {
         s_UserDSCMinted[_of] -= _amountburn;
 
@@ -220,13 +158,7 @@ contract DSCEngine is ReentrancyGuard {
             revert Engine__NotEnoughCollateral();
         }
     }
-    ////////////////////
-    /// Health Factor
-    /////////
-    // _healthFactor @> 
-    // _calculateHealthFactor @> 
-    // _revertIfLowHealthFactor @> 
-    //
+
     function _healthFactor(address _user) private view returns(uint256) {
         (uint256 totalMintedDSC, uint256 collateralValueUSD) = _getAddressInfo(_user);
         return _calculateHealthFactor(totalMintedDSC, collateralValueUSD);

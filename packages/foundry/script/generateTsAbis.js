@@ -110,7 +110,7 @@ function main() {
     });
   });
 
-  const TARGET_DIR = "../nextjs/contracts/";
+  const TARGET_DIR = "../../nextjs/contracts/";
 
   const fileContent = Object.entries(allGeneratedContracts).reduce(
     (content, [chainId, chainConfig]) => {

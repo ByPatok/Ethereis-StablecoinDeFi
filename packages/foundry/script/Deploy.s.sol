@@ -1,47 +1,23 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Script} from "forge-std/Script.sol";
+import {Script} from "@forge-std/Script.sol";
 import {ScaffoldETHDeploy} from "./DeployHelpers.s.sol";
-import {Ethereis} from "../contracts/BrazilianStablecoin.sol";
-import {DSCEngine} from "../contracts/DSCEngine.sol";
+import {Ethereis} from "../contracts/StablecoinToken.sol";
+import {DSCEngine} from "../contracts/DSCEngineCore.sol";
 
 contract DSCEngineDeploy is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
 
     address[] public tokenAddresses;
     address[] public priceFeedAddresses;
-    uint256 public chainid;
-
-    function run() external returns (Ethereis, DSCEngine, ScaffoldETHDeploy) {
-        ScaffoldETHDeploy helperConfig = new ScaffoldETHDeploy(); 
-        chainid = helperConfig.getChain();
-        (
-            address wethUsdPriceFeed,
-            address wbtcUsdPriceFeed,
-            address weth,
-            address wbtc,
-            uint256 deployerKey
-        ) =helperConfig.activeNetworkConfig();
-        
-        tokenAddresses = [weth, wbtc];
-        priceFeedAddresses = [wethUsdPriceFeed, wbtcUsdPriceFeed];
-
-        vm.startBroadcast(deployerKey);
-        Ethereis dsc = new Ethereis();
-        DSCEngine dscEngine = new DSCEngine(
-            tokenAddresses,
-            priceFeedAddresses,
-            address(dsc)
-        );
-        dsc.transferOwnership(address(dscEngine));
-        exportDeployments(); 
-        vm.stopBroadcast();
-        return (dsc, dscEngine, helperConfig); 
+    function run() external {
+        uint256 deployerPrivateKey = setupLocalhostEnv();
+        if (deployerPrivateKey == 0) {
+            revert InvalidPrivateKey(
+                "You don't have a deployer account. Make sure you have set DEPLOYER_PRIVATE_KEY in .env or use `yarn generate` to generate a new random account"
+            );
+        }
     }
-    function getChain() public view returns  (uint256) {
-        return chainid;
-    }
-
     function test() public {}
 }

@@ -9,7 +9,9 @@ remappings = [
     "@chainlink-brownie-contracts/=lib/chainlink-brownie-contracts/contracts/",
     "@ds-test/=lib/openzeppelin-contracts/lib/forge-std/lib/ds-test/src/",
     "@erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
+    "@solidity-bytes-utils/=lib/solidity-bytes-utils/contracts",
     "@forge-std/=lib/forge-std/src/"]
+    
 
 [rpc_endpoints]
 default_network = "http://127.0.0.1:8545"

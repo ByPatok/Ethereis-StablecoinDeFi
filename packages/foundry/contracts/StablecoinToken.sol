@@ -11,7 +11,7 @@ contract Ethereis is ERC20Burnable, Ownable {
     error BRSC__BurnAmountExceeds();
     error BRSC__MustBeZeroAddress();
 
-    constructor() ERC20("Ethereis", "ETHRS") Ownable(msg.sender){}
+    constructor() ERC20("Ethereis", "ETHRS") Ownable(msg.sender) {}
 
     function burn(uint256 _amount) public override onlyOwner {
         uint256 balance = balanceOf(msg.sender);
