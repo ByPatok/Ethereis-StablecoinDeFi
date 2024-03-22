@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {Ethereis} from "./StablecoinToken.sol";
+import {Ethereis} from "./Etheris.sol";
 import {OracleLib, AggregatorV3Interface} from "../lib/OracleLib.sol";
 import {DSCEngineSupport} from "./DSCEngineSupport.sol";
 

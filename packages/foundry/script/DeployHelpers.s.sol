@@ -2,9 +2,15 @@
 pragma solidity ^0.8.20;
 
 import {MockV3Aggregator} from "../test/Mocks/MockV3Aggregator.sol";
+<<<<<<< Updated upstream
 import {Script} from "@forge-std/Script.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 import "@forge-std/Vm.sol";
+=======
+import {Script} from "forge-std/Script.sol";
+import "forge-std/Vm.sol";
+import {ERC20Mock} from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
+>>>>>>> Stashed changes
 
 contract ScaffoldETHDeploy is Script {
     error InvalidChain();
