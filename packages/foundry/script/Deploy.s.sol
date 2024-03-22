@@ -1,7 +1,8 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
-import "../contracts/YourContract.sol";
+import "../contracts/EngineCore.sol";
+import "../contracts/Ethereis.sol";
 import "./DeployHelpers.s.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
@@ -15,11 +16,12 @@ contract DeployScript is ScaffoldETHDeploy {
             );
         }
         vm.startBroadcast(deployerPrivateKey);
-        YourContract yourContract =
-            new YourContract(vm.addr(deployerPrivateKey));
+        Ethereis ethrs = new Ethereis();
+        EngineCore engine = new EngineCore(msg.sender);
+        ethrs.transferOwnership(address(engine));
         console.logString(
             string.concat(
-                "YourContract deployed at: ", vm.toString(address(yourContract))
+                "YourContract deployed at: ", vm.toString(address(engine))
             )
         );
         vm.stopBroadcast();
