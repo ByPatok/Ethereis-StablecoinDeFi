@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+<<<<<<< Updated upstream
 import {DSCEngine} from "./DSCEngineCore.sol";
+=======
+import {DSCEngine} from "./DSCEngine.sol";
+>>>>>>> Stashed changes
 
 contract DSCEngineSupport {
 
