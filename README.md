@@ -30,13 +30,7 @@ Discord: patowtf
 *I'm looking for a team, if you are interested, please feel free to contact me.*  
 
 ## Roadmap
-Please relate bugs.  
-Deployed on sepolia.
-
-- [x] Challenge 0 - [Done (Click to see demo)](https://simplenft-eth-challenge.vercel.app/).
-- [x] Challenge 1 - [Done (Click to see demo)](https://staking-challenge2-etherspeedrun.vercel.app/).
-- [x] Challenge 2 - [Done (Click to see demo)](https://quest2-token-vendor.vercel.app).  
-🎉 **[Joined BuidlGuidl](https://app.buidlguidl.com/builders/0xC4de020Cfb94D5e7Da5536551da6cfE01Dce33Ec)** 🎉
-- [x] Challenge 3 - [Done (Click to see demo)](https://quest3-rigged-dice.vercel.app/).  
-- [x] Challenge 4 - [Done (Click to see demo)](https://quest4-dex-swap.vercel.app/).  
-- [x] Challenge 5 - [Done (Click to see demo](https://quest5-statechannels.vercel.app/). 
+Being planned.  
+- [x] Present Project
+- [ ] Deploy full contract
+  
