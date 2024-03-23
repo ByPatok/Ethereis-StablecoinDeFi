@@ -1,8 +1,15 @@
 # Ethereis - A Stablecoin DeFi
-Ether.réis is a algorithmic, pegged, collateralized Brazilian Stablecoin with the mission to easy access to web3 finance in Brazil.  
+Ether.réis is a algorithmic, pegged, collateralized Brazilian Stablecoin with the mission to easy access to web3 finance in Brasil.  
+
+This projected was created during NearX Optimism Hackathon!  
 
 Our objective is to create a open and easy DeFi for newcomers.  
 The ecossystem revolves around our token $ETHRS, which garantees liquidity, security and multiple benefits.  
+
+**Why this name?**
+Ethereis is a combination of "Ethereum" (ether) + "Réis" (reis).  
+"Réis" was Brasil first currency, the oldest and most used in Brasil history. Which was tradable for gold.
+
 ## Set up
 ```git clone https://github.com/ByPatok/Ethereis-StablecoinDeFi ```  
 ```yarn install ```  
@@ -11,7 +18,7 @@ The ecossystem revolves around our token $ETHRS, which garantees liquidity, secu
 ``` yarn deploy```  
 
 ##
-This project was part of a Hackathon by Nearx and Optimism.  
+  
 
 **Wanna help?**  
 Contact me or post a discussion :)  
