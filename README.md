@@ -6,19 +6,20 @@ This projected was created during NearX Optimism Hackathon!
 Our objective is to create a open and easy DeFi for newcomers.  
 The ecossystem revolves around our token $ETHRS, which garantees liquidity, security and multiple benefits.  
 
-**Why this name?**
+**Why this name?**  
 Ethereis is a combination of "Ethereum" (ether) + "Réis" (reis).  
-"Réis" was Brasil first currency, the oldest and most used in Brasil history. Which was tradable for gold.
+Réis was Brasil first currency, the oldest and most used in Brasil history and was tradable for gold.
 
 ## Set up
-```git clone https://github.com/ByPatok/Ethereis-StablecoinDeFi ```  
-```yarn install ```  
-```yarn chain -b 5 ```  
-``` yarn start```  
-``` yarn deploy```  
+```
+git clone https://github.com/ByPatok/Ethereis-StablecoinDeFi 
+yarn install 
+yarn chain -b 5 
+yarn start
+yarn deploy
+// Error expected: ts; when: deploy; ignore;
+```
 
-##
-  
 
 **Wanna help?**  
 Contact me or post a discussion :)  
